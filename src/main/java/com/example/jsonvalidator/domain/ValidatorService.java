@@ -1,4 +1,4 @@
-package com.example.jsonvalidator;
+package com.example.jsonvalidator.domain;
 
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
@@ -9,12 +9,13 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Map;
 
-public class ExampleValidator {
+public class ValidatorService {
 
     private final Schema schema;
 
-    public ExampleValidator(String schemoLocation) {
+    public ValidatorService(String schemoLocation) {
         this.schema = setSchema(schemoLocation);
     }
 
@@ -26,6 +27,10 @@ public class ExampleValidator {
         FileInputStream dataFile = getFileStream(dataLocation);
         if (dataFile == null) return false;
         return valid(extractJsonObjectFrom(dataFile));
+    }
+
+    public boolean validate(Map<String, Object> request) {
+        return valid(new JSONObject(request));
     }
 
     private Schema setSchema(String schemoLocation) {
