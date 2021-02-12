@@ -14,7 +14,7 @@ public class ValidatorServiceTest {
 
     @BeforeEach
     void setUp() {
-        subject = new ValidatorService("schema.json");
+        subject = new ValidatorService();
     }
 
     @Test
@@ -24,9 +24,20 @@ public class ValidatorServiceTest {
 
     @Test
     void shouldValidateSchemaExist() {
+        ValidatorService subject = new ValidatorService("schema.json");
+
         boolean actual = subject.doesSchemaExist();
 
         assertTrue(actual);
+    }
+
+    @Test
+    void shouldInvalidateSchemaExistWhenFileDoesNotExist() {
+        ValidatorService subject = new ValidatorService("foo.json");
+
+        boolean actual = subject.doesSchemaExist();
+
+        assertFalse(actual);
     }
 
     @Test

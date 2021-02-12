@@ -6,17 +6,23 @@ import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 
+@Service
 public class ValidatorService {
 
     private final Schema schema;
 
-    public ValidatorService(String schemoLocation) {
-        this.schema = setSchema(schemoLocation);
+    public ValidatorService() {
+        this.schema = setSchema("schema.json");
+    }
+
+    public ValidatorService(String schemaLocation) {
+        this.schema = setSchema(schemaLocation);
     }
 
     public boolean doesSchemaExist() {
@@ -33,8 +39,8 @@ public class ValidatorService {
         return valid(new JSONObject(request));
     }
 
-    private Schema setSchema(String schemoLocation) {
-        FileInputStream schemaFile = getFileStream(schemoLocation);
+    private Schema setSchema(String schemaLocation) {
+        FileInputStream schemaFile = getFileStream(schemaLocation);
         if (schemaFile == null) return null;
         return SchemaLoader.load(extractJsonObjectFrom(schemaFile));
     }
