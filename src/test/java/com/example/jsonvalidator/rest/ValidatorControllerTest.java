@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,5 +50,16 @@ class ValidatorControllerTest {
         mvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("valid").value(true));
+    }
+
+    @Test
+    void shouldAcknowledgeSchemaExists() throws Exception {
+        given(validatorService.doesSchemaExist()).willReturn(true);
+
+        MockHttpServletRequestBuilder request = get("/exist");
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("exist").value(true));
     }
 }

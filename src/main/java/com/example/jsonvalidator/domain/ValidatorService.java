@@ -8,8 +8,8 @@ import org.json.JSONTokener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 @Service
@@ -30,7 +30,7 @@ public class ValidatorService {
     }
 
     public boolean validate(String dataLocation) {
-        FileInputStream dataFile = getFileStream(dataLocation);
+        InputStream dataFile = getInputStream(dataLocation);
         if (dataFile == null) return false;
         return valid(extractJsonObjectFrom(dataFile));
     }
@@ -40,19 +40,19 @@ public class ValidatorService {
     }
 
     private Schema setSchema(String schemaLocation) {
-        FileInputStream schemaFile = getFileStream(schemaLocation);
+        InputStream schemaFile = getInputStream(schemaLocation);
         if (schemaFile == null) return null;
         return SchemaLoader.load(extractJsonObjectFrom(schemaFile));
     }
 
-    private JSONObject extractJsonObjectFrom(FileInputStream schemaFile) {
+    private JSONObject extractJsonObjectFrom(InputStream schemaFile) {
         JSONTokener schemaData = new JSONTokener(schemaFile);
         return new JSONObject(schemaData);
     }
 
-    private FileInputStream getFileStream(String location) {
+    private InputStream getInputStream(String location) {
         try {
-            return new FileInputStream(new ClassPathResource(location).getFile());
+            return new ClassPathResource(location).getInputStream();
         } catch (IOException e) {
             return null;
         }
