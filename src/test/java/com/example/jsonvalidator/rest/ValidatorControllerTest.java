@@ -1,6 +1,8 @@
 package com.example.jsonvalidator.rest;
 
 import com.example.jsonvalidator.domain.SchemaValidator;
+import com.example.jsonvalidator.domain.TransformationService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +14,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.when;
@@ -30,6 +34,9 @@ class ValidatorControllerTest {
     @MockBean
     SchemaValidator schemaValidator;
 
+    @MockBean
+    TransformationService transformationService;
+
     @Test
     void shouldValidateProperInput() throws Exception {
         Map<String, Object> input = new HashMap<>();
@@ -37,14 +44,22 @@ class ValidatorControllerTest {
         input.put("name", "Eugene");
         input.put("age", 27);
 
-        when(schemaValidator.valid(input)).thenReturn(true);
+        Map<String, Object> output = new HashMap<>();
+        output.put("doubleAge", 54);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<JsonNode> result = Collections.singletonList(objectMapper.valueToTree(output));
+
+        when(schemaValidator.valid(input))
+                .thenReturn(true);
+        when(transformationService.transform(objectMapper.valueToTree(input)))
+                .thenReturn(result);
 
         MockHttpServletRequestBuilder request = post("/validate")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(input));
+                .content(objectMapper.writeValueAsString(input));
 
         mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("valid").value(true));
+                .andExpect(jsonPath("[0].doubleAge").value(54));
     }
 }
