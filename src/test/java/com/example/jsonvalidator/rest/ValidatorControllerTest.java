@@ -1,8 +1,7 @@
 package com.example.jsonvalidator.rest;
 
-import com.example.jsonvalidator.domain.ValidatorService;
+import com.example.jsonvalidator.domain.SchemaValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,18 +28,16 @@ class ValidatorControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private ValidatorService validatorService;
-
-    private Map<String, Object> input;
-
-    @BeforeEach
-    void setUp() {
-        input = new HashMap<>();
-    }
+    SchemaValidator schemaValidator;
 
     @Test
     void shouldValidateProperInput() throws Exception {
-        given(validatorService.validate(input)).willReturn(true);
+        Map<String, Object> input = new HashMap<>();
+        input.put("id", 123);
+        input.put("name", "Eugene");
+        input.put("age", 27);
+
+        when(schemaValidator.valid(input)).thenReturn(true);
 
         MockHttpServletRequestBuilder request = post("/validate")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,16 +46,5 @@ class ValidatorControllerTest {
         mvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("valid").value(true));
-    }
-
-    @Test
-    void shouldAcknowledgeSchemaExists() throws Exception {
-        given(validatorService.doesSchemaExist()).willReturn(true);
-
-        MockHttpServletRequestBuilder request = get("/exist");
-
-        mvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("exist").value(true));
     }
 }
