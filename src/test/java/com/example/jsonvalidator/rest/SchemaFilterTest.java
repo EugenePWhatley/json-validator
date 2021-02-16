@@ -54,9 +54,7 @@ class SchemaFilterTest {
 
     @Test
     void shouldContinueToFilterChainWhenRequestIsAGet() throws IOException, ServletException {
-        Map<String, Object> requestBody = Map.of();
         request = new MockHttpServletRequest("GET", "");
-        when(mapper.readValue(any(BufferedReader.class), eq(Map.class))).thenReturn(requestBody);
 
         schemaFilter.doFilter(request, response, filterChain);
 
