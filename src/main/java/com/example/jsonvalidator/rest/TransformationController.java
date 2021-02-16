@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ValidatorController {
+public class TransformationController {
 
     @Autowired
     TransformationService transformationService;
 
-    @PostMapping(value = "validate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity valid(@RequestBody JsonNode request) throws JsonQueryException {
+    @PostMapping(value = "transform", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity transform(@RequestBody JsonNode request) throws JsonQueryException {
         return ResponseEntity.ok().body(transformationService.transform(request));
     }
 }

@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(ValidatorController.class)
-class ValidatorControllerTest {
+@WebMvcTest(TransformationController.class)
+class TransformationControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -54,7 +54,7 @@ class ValidatorControllerTest {
         when(transformationService.transform(objectMapper.valueToTree(input)))
                 .thenReturn(result);
 
-        MockHttpServletRequestBuilder request = post("/validate")
+        MockHttpServletRequestBuilder request = post("/transform")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(input));
 
